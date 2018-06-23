@@ -1,0 +1,46 @@
+<html>
+    <script>
+		if("serviceWorker" in navigator) {
+			navigator.serviceWorker
+			.register("sw.js")
+			.then(r => {
+                console.log("Successfully registered the serviceWorker");
+                console.log("Registration scope : ", r.scope);
+            })
+			.catch(console.error);
+        }
+        var imgElement = document.createElement("img");
+        
+        function errorOpenResource(err) {
+            console.error("Error : ", err);
+        }
+
+        function readResponseAsBlob(response) {
+            if(!response.ok) {
+                throw Error(response.statusText );
+            }
+
+            return response.clone().blob();
+        }
+
+        function appendImageNode(blobData) {
+            var outputElement = document.getElementById("output");
+            var imgUrl = URL.createObjectURL(blobData);
+            imgElement.src = imgUrl;
+            outputElement.appendChild(imgElement);
+        }
+
+        function openResource() {
+            fetch("/sfdc.png")
+            .then(readResponseAsBlob)
+            .then(appendImageNode)
+            .catch(errorOpenResource);
+        }
+    </script>
+    <body>
+        <button onclick="openResource()">Open resource</button>
+        <hr/>
+        <output id="output"></output>
+    </body>
+
+</html>
